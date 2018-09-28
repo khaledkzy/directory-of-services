@@ -10,9 +10,9 @@ Data to be migrate
 
 Api end-point
 ============
-1. `localhost:3002/service/migrate` , to load the service data in to the database.
-2. `localhost:3002/service/all` , to get all the inserted data.
-3. `localhost:3002/service`, to post the data .
+1. `localhost:3002/api/service/migrate` , to load the service data in to the database.
+2. `localhost:3002/api/service/all` , to get all the inserted data.
+3. `localhost:3002/api/service`, to post the data .
 
 ## There are four scripts important to understand what they are doing
 1- `yarn run migrate` for migrate the data locally
