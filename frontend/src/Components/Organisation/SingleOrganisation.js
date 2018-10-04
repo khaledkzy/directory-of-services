@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import ReactToPrint from "react-to-print";
 import Dialog, {
   withMobileDialog,
 } from 'material-ui/Dialog';
@@ -6,7 +7,6 @@ import Button from 'material-ui/Button';
 import EditOrganisation from './EditOrganisation';
 import Notification from '../Users/Notification'
 import './single-org.css';
-import ReactToPrint from "react-to-print";
 
 class SingleOrganisation extends Component {
   state = {
@@ -86,7 +86,7 @@ class SingleOrganisation extends Component {
           <div className="org-service">
             <h4>Services</h4>
             {org.service ? <Fragment> <p className="service"> {org.service}</p></Fragment> :
-              <p className="not-available">{`${uiMessage}`} services ...</p>}
+            <p className="not-available">{`${uiMessage}`} services ...</p>}
           </div>
 
           <div className="org-process">
