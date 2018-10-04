@@ -220,7 +220,13 @@ class EditOrganisation extends React.Component {
               </Button>
             </div>
           </DialogTitle>
-          <DialogContent className="edit-content">
+          <DialogContent
+            className="edit-content"
+            ref={el => {
+                (this.componentRef=el)
+                return this.componentRef
+                }}
+          >
             <ReactToPrint
               trigger={() => <i className="material-icons" > print </i>}
               content={() => this.componentRef}
@@ -253,12 +259,9 @@ class EditOrganisation extends React.Component {
               check={this.state.isChecked}
               handleDefaultCheckbox={this.handleDefaultCheckbox}
               close={this.handleClose}
-              ref={el => {
-                (this.componentRef=el)
-                return this.componentRef
-                }}
+
             />
-          </DialogContent>
+          </DialogContent >
           <DialogActions className="edit-mode-btn">
             <Button
               className="cancel-btn"
