@@ -34,9 +34,9 @@ class SingleOrganisation extends Component {
             onClick={this.handleOpen}
             variant="raised"
             size="small"
-            className={role !== 'Admin' && role !== 'Editor' ? 'move-right' : 'btn detail-button'}
+            className='move-right'
           >
-            <i className="material-icons">add</i>DETAILS
+          View details <i className="material-icons" > arrow_right_alt </i>
           </Button>
         </div>
         <Dialog

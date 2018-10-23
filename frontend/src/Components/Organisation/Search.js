@@ -1,53 +1,61 @@
-import React from 'react';
-import Button from 'material-ui/Button';
-import PropTypes from 'prop-types';
-import Grid from 'material-ui/Grid';
-import { InputLabel } from 'material-ui/Input';
-import { MenuItem } from 'material-ui/Menu';
-import { FormControl } from 'material-ui/Form';
-import Select from 'material-ui/Select';
-import Autosuggest from 'react-autosuggest';
-import { withStyles } from 'material-ui/styles';
-import 'react-select/dist/react-select.css';
-import helpers from '../../helpers';
-import BoroughData from '../../Data/Boroughs.json';
-import searchStyle from './searchStyle';
-import './search.css';
+import React from "react";
+import Button from "material-ui/Button";
+import PropTypes from "prop-types";
+import Grid from "material-ui/Grid";
+import { InputLabel } from "material-ui/Input";
+import { MenuItem } from "material-ui/Menu";
+import { FormControl } from "material-ui/Form";
+import Select from "material-ui/Select";
+import Autosuggest from "react-autosuggest";
+import { withStyles } from "material-ui/styles";
+import "react-select/dist/react-select.css";
+import helpers from "../../helpers";
+import searchStyle from "./searchStyle";
+import "./search.css";
 
 const organisations = [
-  { postCode: 'SE8 4PA' },
-  { postCode: 'H2 2TH' },
-  { postCode: 'H2 3TH' },
+  { postCode: "SE8 4PA" },
+  { postCode: "H2 2TH" },
+  { postCode: "H2 3TH" }
 ];
 const days = [
-  { id: 1,
-    day: 'Monday' },
-  { id: 2,
-    day: 'Tuesday' },
-  { id: 3,
-    day: 'Wednesday' },
-  { id: 4,
-    day: 'Thursday' },
-  { id: 5,
-    day: 'Friday' },
-  { id: 6,
-    day: 'Saturday' },
-  { id: 7,
-    day: 'Sunday' },
-  { id: 8,
-    day: 'Mon-Fri' },
-  { id: 9,
-    day: 'All' },
-]
-
-const boroughs = BoroughData.sort(((a,b) =>  {
-  if (a.borough < b.borough) {
-    return -1
-  }if (a.borough > b.borough) {
-    return 1
+  {
+    id: 1,
+    day: "Monday"
+  },
+  {
+    id: 2,
+    day: "Tuesday"
+  },
+  {
+    id: 3,
+    day: "Wednesday"
+  },
+  {
+    id: 4,
+    day: "Thursday"
+  },
+  {
+    id: 5,
+    day: "Friday"
+  },
+  {
+    id: 6,
+    day: "Saturday"
+  },
+  {
+    id: 7,
+    day: "Sunday"
+  },
+  {
+    id: 8,
+    day: "Mon-Fri"
+  },
+  {
+    id: 9,
+    day: "All"
   }
-  return 0;
-}));
+];
 
 class Search extends React.Component {
   state = {
@@ -56,13 +64,13 @@ class Search extends React.Component {
 
   handleSuggestionsFetchRequested = ({ value }) => {
     this.setState({
-      suggestions: helpers.getSuggestions(value, organisations),
+      suggestions: helpers.getSuggestions(value, organisations)
     });
   };
 
   handleSuggestionsClearRequested = () => {
     this.setState({
-      suggestions: [],
+      suggestions: []
     });
   };
 
@@ -71,13 +79,13 @@ class Search extends React.Component {
     return (
       <Grid container spacing={24} className="org-search">
         <Grid item md={5} xs={12} className="post-code">
-          <span  className="postcode-field">
+          <span className="postcode-field">
             <Autosuggest
               theme={{
                 container: classes.container,
                 suggestionsContainerOpen: classes.suggestionsContainerOpen,
                 suggestionsList: classes.suggestionsList,
-                suggestion: classes.suggestion,
+                suggestion: classes.suggestion
               }}
               className="post-code-suggesition"
               renderInputComponent={helpers.renderInput}
@@ -89,30 +97,37 @@ class Search extends React.Component {
               renderSuggestion={helpers.renderSuggestion}
               inputProps={{
                 classes,
-                placeholder: 'Enter postcode',
-                name: 'postCode',
-                value: this.props.postCode,
-                onChange: this.props.handlePostCodeChange,
+                placeholder: "Enter postcode or borough...",
+                name: "postCode",
+                value: this.props.searchInput,
+                onChange: this.props.handlePostCodeChange
               }}
             />
             <button
               variant="raised"
               size="small"
               color="secondary"
-              className={!this.props.isPostcode ? 'hidden' : 'clear-postcode'}
+              className={
+                !this.props.isPostcode || this.props.searchInput.length < 1
+                  ? "hidden"
+                  : "clear-postcode"
+              }
               onClick={this.props.clearPostcodeField}
             >
-              <i
-                className="material-icons"
-                size="small"
-                variant="raised"
-              >
+              <i className="material-icons" size="small" variant="raised">
                 close
               </i>
             </button>
             <span className="postcode-error">{this.props.postcodeError}</span>
           </span>
-          <Button variant="fab" mini color="secondary" onClick={this.props.handlePostSearch} aria-label="add" className="search-button">
+          <Button
+            variant="fab"
+            mini
+            color="secondary"
+            onClick={this.props.handlePostSearch}
+            aria-label="add"
+            className="search-button"
+          >
             <i className="material-icons">search</i>
           </Button>
         </Grid>
@@ -124,33 +139,18 @@ class Search extends React.Component {
               value={this.props.day}
               onChange={this.props.handleSelectedDay}
               inputProps={{
-                name: 'day',
-                id: 'day',
+                name: "day",
+                id: "day"
               }}
             >
               <MenuItem value="">
                 <em>Any Day</em>
               </MenuItem>
-              {days.map(day=> <MenuItem key={day.id} value={day.day}>{day.day}</MenuItem>)}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item md={3} xs={12} className="service">
-          <FormControl className={classes.formControl}>
-            <InputLabel htmlFor="borough">Select Borough</InputLabel>
-            <Select
-              className="select-field-container"
-              value={this.props.borough}
-              onChange={this.props.handleSelectedBorough}
-              inputProps={{
-                name: 'borough',
-                id: 'borough',
-              }}
-            >
-              <MenuItem value="">
-                <em>All Borough</em>
-              </MenuItem>
-              {boroughs.map(borough => <MenuItem key={borough.id} value={borough.borough}>{borough.borough}</MenuItem>)}
+              {days.map(day => (
+                <MenuItem key={day.id} value={day.day}>
+                  {day.day}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
@@ -160,7 +160,7 @@ class Search extends React.Component {
 }
 
 Search.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(searchStyle.styles)(Search);
