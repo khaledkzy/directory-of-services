@@ -38,23 +38,23 @@ class EditOrganisation extends React.Component {
       isChecked: true,
       isLoading: false
     }
-  
+
   componentWillMount() {
     const data = this.props.org;
     if (data) {
       const categories = [];
       const { checkCategories } = orgHelpers;
-      // Data.cat_name.length is 1 => all category represents a single item 
+      // Data.cat_name.length is 1 => all category represents a single item
       // So made a new array where each category is an individual item of the array
       for (let i = 0; i < checkCategories.length; i += 1) {
         const index = data.cat_name.includes(checkCategories[i]);
         if(index){
           categories.push(checkCategories[i]);
-        } 
+        }
       }
 
       if (data.cat_name.includes('Young People/Children') || data.cat_name.includes('Young People and Children')){
-        categories.push('Young People/Children');    
+        categories.push('Young People/Children');
       }
       this.setState({
         branchId: data.branch_id,
@@ -130,7 +130,7 @@ class EditOrganisation extends React.Component {
       clients: this.state.clients,
       tag: this.state.tag
     }
-    
+
     this.setState({ isLoading: true });
     this.props.editOrganisation(orgData)
       .then(user => {
@@ -162,7 +162,7 @@ class EditOrganisation extends React.Component {
   };
 
   // Default checkbox selected
-  handleDefaultCheckbox = event => { 
+  handleDefaultCheckbox = event => {
     const listOfCategories = [...this.state.Categories];
     orgHelpers.handleDefaultCheckboxProcess(event, listOfCategories);
     this.setState({
@@ -170,7 +170,7 @@ class EditOrganisation extends React.Component {
       Categories: [...new Set(listOfCategories)],
       isChecked:!this.state.isChecked,
     });
-    
+
    };
 
 
@@ -209,18 +209,24 @@ class EditOrganisation extends React.Component {
           autoscrollbodycontent="true"
           contentstyle={{width: 100, maxWidth: "none"}}
         >
-          <DialogTitle id="form-dialog-title" className="edit-org-title"> 
+          <DialogTitle id="form-dialog-title" className="edit-org-title">
             <div> {""}</div>
-            <div className="org-close-btn"> 
+            <div className="org-close-btn">
               <Button
                 onClick={this.handleClose}
                 className="close-button"
               >
                 <i className="material-icons" size="small" variant="raised">close</i>
-              </Button> 
+              </Button>
             </div>
           </DialogTitle>
-          <DialogContent className="edit-content">
+          <DialogContent
+            className="edit-content"
+            ref={el => {
+                (this.componentRef=el)
+                return this.componentRef
+                }}
+          >
             <ReactToPrint
               trigger={() => <i className="material-icons" > print </i>}
               content={() => this.componentRef}
@@ -253,12 +259,9 @@ class EditOrganisation extends React.Component {
               check={this.state.isChecked}
               handleDefaultCheckbox={this.handleDefaultCheckbox}
               close={this.handleClose}
-              ref={el => { 
-                (this.componentRef=el)
-                return this.componentRef
-                }}
+
             />
-          </DialogContent>
+          </DialogContent >
           <DialogActions className="edit-mode-btn">
             <Button
               className="cancel-btn"

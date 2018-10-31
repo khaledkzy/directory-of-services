@@ -43,6 +43,7 @@
 .users-tbody .user-text:last-child {
   padding-right: 0;
 }
+
 .users-tbody td {
   text-align: left;
   border-bottom: 1px solid rgba(69, 189, 212, 0.29);
@@ -54,15 +55,14 @@
   justify-content: center;
 }
 
-.users-tfoot td div div,
-.users-tfoot td div span {
+.users-tfoot .pagination-arrows div,
+.pagination-arrows span {
   display: none;
 }
 
-.users-tfoot td div div:last-child,
-.users-tfoot td div span:last-child {
-  display: block;
-  color: black;
+.users-tfoot .pagination-arrows div:last-child,
+.pagination-arrows button span {
+  display: flex;
 }
 
 .users-tbody .edit-user-button,
@@ -78,7 +78,9 @@
 #root main {
   padding: 0 0.5rem;
   overflow-x: hidden;
-} /*  <=================from the root  */
+} 
+
+/*  <=================from the root  */
 
 /* --------------------->Media queries<------------------------------- */
 

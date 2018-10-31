@@ -17,17 +17,17 @@
   color: #bbb;
   justify-self: flex-end;
 }
+
 .users-menu a {
   display: block;
   text-decoration: none;
   padding-left: 2em;
-  color: #ffffff;
+  color: #b8b8b9;
   border-color: transparent;
 }
 
-.users-menu .menu-header {
-  color: #1abcd4;
-  padding: 0 0 1em 2em;
+.users-menu a {
+  padding: 0 0 1em 1.4rem;
 }
 
 .add-user {
@@ -60,7 +60,7 @@
   box-shadow: 0px 2px 4px 2px #bbb;
 }
 
-.add-user div :after{ 
+.add-user div :after {
   background-color: #1abcd4;
 }
 
@@ -68,22 +68,22 @@
   margin: 1.5rem 0;
   color: #45bdd4e0;
   text-transform: uppercase;
-  margin-left: .5rem;
+  margin-left: 0.5rem;
 }
 
-.delete-notification{
+.delete-notification {
   background: #000;
 }
-.delete-notification div h2{
+.delete-notification div h2 {
   color: yellow;
 }
 
-button.delete{
-  top: 40px ;
+button.delete {
+  top: 40px;
   left: 0px;
-  width: 80px ;
-  height: 40px ;
-  padding: 9px ;
+  width: 80px;
+  height: 40px;
+  padding: 9px;
   border-radius: 0;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -92,12 +92,29 @@ button.delete{
   font-size: 0.875rem;
 }
 
-.delete .material-icons{
-  font-size: 1em
+.delete .material-icons {
+  font-size: 1em;
 }
 
 .users-info {
   padding: 3rem 0 3rem 2rem;
 }
 
+.users-menu {
+  padding: 0 10px;
+}
+
+.users-menu a[target='blank'] {
+  padding: 8px 20px;
+  background: #1abcd4;
+  border: 1px solid transparent;
+  margin-top: 30px;
+  border-radius: 7px;
+  color: #fff;
+}
+
+.users-menu a:hover,
+.users-menu a:focus {
+  color: white;
+}
 /* .MuiInput-underline-238:before */

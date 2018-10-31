@@ -2,7 +2,6 @@ import React from 'react';
 import { withStyles } from 'material-ui/styles';
 import Paper from './PaperOrg';
 import SingleOrganisation from './SingleOrganisation';
-import EditOrganisation from './EditOrganisation';
 import './index.css';
 
 
@@ -27,13 +26,8 @@ const OrganisationCard = ({
   isHomeRoute
 }) => (
   <Paper label='org-card-info'>
-    { role === 'Admin' || role === 'Editor' ?
-      <EditOrganisation org={org} /> : null
-    }
     <SingleOrganisation org={org} role={role} />
-
     { /*  Conditionally display services and process, if no info provided display  'not provided' in FE */ }
-
     { org.org_name ?
       <span className={org.distance || org.distance === null ? 'org-distance': ''}>
         <h1>{org.org_name}</h1>

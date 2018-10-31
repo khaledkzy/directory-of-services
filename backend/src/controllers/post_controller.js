@@ -28,8 +28,8 @@ const deleteBranch = async (orgId, branchId) => {
 
 const editOrganisation = async (graph, orgId, branchId) => {
   const options = {
-    relate: ['branch', 'branch.address', 'branch.address.location', 'branch.service', 'branch.sercice.categories'],
-    noDelete: ['branch', 'branch.address', 'branch.address.location', 'branch.service', 'branch.sercice.categories']
+    relate: ['branch', 'branch.address', 'branch.address.location', 'branch.service', 'branch.service.categories'],
+    noDelete: ['branch', 'branch.address', 'branch.address.location', 'branch.service', 'branch.service.categories']
   };
 
   if (Array.isArray(graph)) {

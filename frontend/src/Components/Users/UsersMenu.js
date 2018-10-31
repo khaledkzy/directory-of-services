@@ -10,6 +10,7 @@ const UsersMenu = () => (
     <Link to="/users/form" role="button">
       Add
     </Link>
+    <a href="https://goo.gl/Jhy5Us" target="blank">Please Give Feedback</a>
   </div>
 );
 

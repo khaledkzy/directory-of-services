@@ -165,6 +165,22 @@ div.org-home .org-card-info .edit-button {
   top: 6px;
 }
 
+/* Bug form */
+
+.bug-form {
+  display: grid;
+  margin-top: 2rem;
+  grid-gap: .8rem;
+  padding: 1rem;
+}
+
+.bug-form a {
+  text-decoration: none;
+  color: rgb(26, 188, 212);
+  font-weight: 600;
+}
+
+
 @media (max-width: 591px){
   .search-input{
     grid-template-columns: 1fr;

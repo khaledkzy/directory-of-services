@@ -13,6 +13,7 @@ import {
   getBranchesByPostcode,
   getSingleBranch
 } from '../controllers/get_controller';
+
 const router = express.Router();
 
 router.delete('/organisation/delete', async (req, res) => {
@@ -131,8 +132,11 @@ router.put('/organisation/edit', async (req, res) => {
 
 router.get('/all', async (req, res) => {
   try {
-    await getAllOrgainisation().then(services =>
-      res.status(200).json(services));
+    // Encode data
+    const services = await getAllOrgainisation()
+    const b64Data = Buffer.from(JSON.stringify(services)).toString('base64')
+    res.status(200).json(JSON.stringify(b64Data))
+
   } catch (err) {
     res.status(502).json(err);
   }

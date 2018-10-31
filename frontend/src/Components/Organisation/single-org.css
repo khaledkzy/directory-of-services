@@ -75,11 +75,23 @@
 }
 
 .org-detail-btn .move-right{
-  left: 81% !important;
+  font-size: 15px;
+  color: #1abcd4;
+  left: 73% ;
+  top: 8.1rem;
+  right: 0;
   border-radius: 0;
   background-color: transparent;
   border: 0;
   box-shadow: 0 0;
+  text-transform: inherit;
+}
+
+/* Arrow button  */
+.move-right i{
+  padding-left: .2rem;
+  font-size: 25px;
+  font-weight: bolder;
 }
 
 .org-info .edit-button {
@@ -127,6 +139,6 @@
 
 @media (max-width: 767px){
   .org-detail-btn .move-right{
-    left: 75% !important;
+    left: 65%;
   }
 }

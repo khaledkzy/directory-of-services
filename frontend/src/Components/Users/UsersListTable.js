@@ -36,7 +36,7 @@ class UsersListTable extends Component {
       selected: [],
       data: [],
       page: 0,
-      rowsPerPage: 5,
+      rowsPerPage: 10,
       editIdx: -1,
       notificationSystem: null,
     };
@@ -269,6 +269,7 @@ class UsersListTable extends Component {
             <TableFooter className="users-tfoot">
               <TableRow>
                 <TablePagination
+                  className="pagination-arrows"
                   colSpan={6}
                   count={data.length}
                   rowsPerPage={rowsPerPage}

@@ -86,12 +86,6 @@ div.org-card-info {
 .org-card-info .org-edit-btn,
 .org-info .org-close-btn{ height: 0;}
 
-.org-card-info .org-detail-btn button {
-  top: 8.2rem;
-  right: 0;
-  left: 43%;
-}
-
 .org-info .org-edit-btn {
   bottom: 6px;
   right: 7px;

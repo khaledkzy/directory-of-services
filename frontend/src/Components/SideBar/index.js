@@ -64,7 +64,7 @@ class SideBar extends React.Component {
     const drawer = (
       <div className="side-bar-scroll">
         <div className="logo">
-          <Link to="/home">LOGO</Link>
+          <Link to="/home">HOME</Link>
           <Hidden mdUp>
             <IconButton
               className="draw-close-button"

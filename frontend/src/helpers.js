@@ -1,17 +1,17 @@
-import React from 'react';
-import TextField from 'material-ui/TextField';
-import parse from 'autosuggest-highlight/parse';
-import Paper from 'material-ui/Paper';
-import { MenuItem } from 'material-ui/Menu';
-import match from 'autosuggest-highlight/match';
-import Chip from 'material-ui/Chip';
-import Select from 'react-select';
-import ArrowDropDownIcon from 'material-ui-icons/ArrowDropDown';
-import CancelIcon from 'material-ui-icons/Cancel';
-import ArrowDropUpIcon from 'material-ui-icons/ArrowDropUp';
-import ClearIcon from 'material-ui-icons/Clear';
-import Typography from 'material-ui/Typography';
-import Option from './Components/Organisation/Option';
+import React from "react";
+import TextField from "material-ui/TextField";
+import parse from "autosuggest-highlight/parse";
+import Paper from "material-ui/Paper";
+import { MenuItem } from "material-ui/Menu";
+import match from "autosuggest-highlight/match";
+import Chip from "material-ui/Chip";
+import Select from "react-select";
+import ArrowDropDownIcon from "material-ui-icons/ArrowDropDown";
+import CancelIcon from "material-ui-icons/Cancel";
+import ArrowDropUpIcon from "material-ui-icons/ArrowDropUp";
+import ClearIcon from "material-ui-icons/Clear";
+import Typography from "material-ui/Typography";
+import Option from "./Components/Organisation/Option";
 
 function renderInput(inputProps) {
   const { classes, ref, ...other } = inputProps;
@@ -21,9 +21,9 @@ function renderInput(inputProps) {
       inputRef={ref}
       InputProps={{
         classes: {
-          input: classes.input,
+          input: classes.input
         },
-        ...other,
+        ...other
       }}
     />
   );
@@ -31,23 +31,30 @@ function renderInput(inputProps) {
 
 // Render the suggestion values when user type into home page search field
 function renderMainSearchSuggestion(suggestion, { query, isHighlighted }) {
-  const matches = match(suggestion.org_name ? suggestion.org_name : suggestion.borough, query);
-  const parts = parse(suggestion.org_name ? suggestion.org_name : suggestion.borough, matches);
+  const matches = match(
+    suggestion.org_name ? suggestion.org_name : suggestion.borough,
+    query
+  );
+  const parts = parse(
+    suggestion.org_name ? suggestion.org_name : suggestion.borough,
+    matches
+  );
 
   return (
     <MenuItem selected={isHighlighted} component="div">
       <div>
-        {parts.map((part, index) =>
-          (
-            part.highlight ?
+        {parts.map(
+          (part, index) =>
+            part.highlight ? (
               <span key={String(index)} style={{ fontWeight: 300 }}>
                 {part.text}
               </span>
-              :
+            ) : (
               <strong key={String(index)} style={{ fontWeight: 500 }}>
                 {part.text}
               </strong>
-          ))}
+            )
+        )}
       </div>
     </MenuItem>
   );
@@ -70,7 +77,7 @@ function renderSuggestion(organisation, { query, isHighlighted }) {
               <strong key={String(index)} style={{ fontWeight: 500 }}>
                 {part.text}
               </strong>
-              ),
+            )
         )}
       </div>
     </MenuItem>
@@ -81,7 +88,11 @@ function renderSuggestion(organisation, { query, isHighlighted }) {
 function renderSuggestionsContainer(options) {
   const { containerProps, children } = options;
   return (
-    <Paper style={{ minHeight: 0, maxHeight: 300, overflowY: 'auto' }} {...containerProps} square>
+    <Paper
+      style={{ minHeight: 0, maxHeight: 300, overflowY: "auto" }}
+      {...containerProps}
+      square
+    >
       {children}
     </Paper>
   );
@@ -101,19 +112,27 @@ function getSuggestionValue(orgainsation) {
 function getMainSearchSuggestions(value, suggestions) {
   const inputValue = value.trim().toLowerCase();
   const inputLength = inputValue.length;
-  const filteredSugg = suggestions.filter((elem, index, self) =>
-    index === self.findIndex(toDo =>
-      toDo.org_name === elem.org_name || toDo.borough === elem.borough
-    ))
+  const filteredSugg = suggestions.filter(
+    (elem, index, self) =>
+      index ===
+      self.findIndex(
+        toDo => toDo.org_name === elem.org_name || toDo.borough === elem.borough
+      )
+  );
 
   return inputLength === 0
     ? []
     : filteredSugg.filter(suggestion => {
-      if (suggestion.borough.includes(inputValue)) {
-        return suggestion.borough.toLowerCase().slice(0, inputLength) === inputValue;
-      }
-      return suggestion.org_name.toLowerCase().slice(0, inputLength) === inputValue;
-    });
+        if (suggestion.borough.includes(inputValue)) {
+          return (
+            suggestion.borough.toLowerCase().slice(0, inputLength) ===
+            inputValue
+          );
+        }
+        return (
+          suggestion.org_name.toLowerCase().slice(0, inputLength) === inputValue
+        );
+      });
 }
 
 function getSuggestions(value, organisations) {
@@ -121,9 +140,11 @@ function getSuggestions(value, organisations) {
   const inputLength = inputValue.length;
   return inputLength === 0
     ? []
-    : organisations.filter(organisation =>
-      organisation.postCode.toLowerCase().slice(0, inputLength) === inputValue
-    )
+    : organisations.filter(
+        organisation =>
+          organisation.postCode.toLowerCase().slice(0, inputLength) ===
+          inputValue
+      );
 }
 
 function SelectWrapped(props) {
@@ -168,32 +189,42 @@ function SelectWrapped(props) {
 function linkMaker(name) {
   // These [" "] and [/] will replace all of sapce between words or / to none space
   return name
-    ? name.replace(/[" "]/g, '').replace(/[/]/g, '').replace(" & ", '').replace(/\b\w/g, l => l.toUpperCase())
+    ? name
+        .replace(/[" "]/g, "")
+        .replace(/[/]/g, "")
+        .replace(" & ", "")
+        .replace(/\b\w/g, l => l.toUpperCase())
     : null;
 }
 
 function categoryNameMaker(name) {
   // This [/] will replace all of / to none space
   return name
-    ? name.replace(/[/]/g, '').replace("services", '').replace("add", '').replace(/\b\w/g, l => l.toUpperCase())
+    ? name
+        .replace(/[/]/g, "")
+        .replace("services", "")
+        .replace("add", "")
+        .replace(/\b\w/g, l => l.toUpperCase())
     : null;
 }
 
 function addSpace(cat, catTitle) {
   // This [/] will replace all of / to none space
   return cat.map(category => {
-    const title = category.replace(/[/]/g, '');
+    const title = category.replace(/[/]/g, "");
     if (linkMaker(category) === catTitle) {
-      return title
+      return title;
     }
     return false;
-  })
+  });
 }
 
 function addSpaceToCategName(cat, catTitle) {
   if (catTitle.length > 0) {
     const title = categoryNameMaker(catTitle);
-    return cat.filter(category => category.replace(/[' ']/g, '').includes(title))
+    return cat.filter(category =>
+      category.replace(/[' ']/g, "").includes(title)
+    );
   }
 }
 
@@ -221,8 +252,23 @@ function sortArrObj(a, b) {
 // This function with handle the coming from backend and format it to JavaScript object
 function errorParser(error) {
   let errMessage = JSON.stringify(error);
-      errMessage = JSON.parse(errMessage).response.data;
-      return errMessage;
+  errMessage = JSON.parse(errMessage).response.data;
+  return errMessage;
+}
+
+function isAlphaNumeric(str) {
+  return /^([0-9]+[a-zA-Z]+|[a-zA-Z]+[0-9]+)[0-9a-zA-Z]*$/.test(
+    str.replace(/\s/g, "")
+  );
+}
+
+function displayCategoryNameWithSpace(categoriesData, category) {
+  let projectCategory = category;
+  categoriesData.map(orgCat => {
+    if (orgCat.replace(/\s/g, "") === category) projectCategory = orgCat;
+    return projectCategory;
+  });
+  return projectCategory;
 }
 
 export default {
@@ -241,6 +287,7 @@ export default {
   sortArrObj,
   getMainSearchSuggestionValue,
   getMainSearchSuggestions,
-  errorParser
+  errorParser,
+  isAlphaNumeric,
+  displayCategoryNameWithSpace
 };
-

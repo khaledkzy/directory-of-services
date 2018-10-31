@@ -6,8 +6,12 @@
   color: #ccc;
 }
 
-/* allow to control font-size in org card detail by modify font-sie of  div parent */
-/* .org-info { font-size: 15px; } */
+/* Remove background default color & shadow when button is hover */
+.organisation-page button:hover,
+.organisation-page button:active {
+  background: transparent;
+  box-shadow: none;
+}
 
 /* label title org edit - org detail info  */
 .edit-content .normal-weight,

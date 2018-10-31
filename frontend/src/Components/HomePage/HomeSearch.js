@@ -32,6 +32,7 @@ class HomeSearch extends React.Component {
     isLoading: false,
     isHidden: true,
     sort: false,
+    showLink: true,
   };
 
   componentWillReceiveProps(newProps) {
@@ -147,8 +148,14 @@ class HomeSearch extends React.Component {
 
   updateSearchData = () => {
     // Remove x sign uses to clear input when user start search(value)
-    this.setState({ search: this.state.value, isHidden: true})
-    this.setState({ postcodeValue: this.state.postCode, isPostcode: false })
+    this.setState({ 
+      search: this.state.value, 
+      isHidden: true,
+      postcodeValue: this.state.postCode, 
+      isPostcode: false,
+      showLink: false, 
+      })
+
     this.handlePostSearch()
   }
 
@@ -254,6 +261,13 @@ class HomeSearch extends React.Component {
             handleSuggestionsFetchRequestedPostcode={this.handleSuggestionsFetchRequestedPostcode}
             handleSuggestionsClearRequestedPostcode={this.handleSuggestionsClearRequestedPostcode}
           />
+          {/* Bugs form link  */}
+          {this.state.showLink && 
+            <div className="bug-form">
+              <h4>We would love your feedback {"  "}😍 </h4>
+              <p>Please provide your feedback by clicking <a href="https://goo.gl/Jhy5Us" target="blank">here</a></p>
+            </div>
+          }
           { this.state.postcodeError ? <span className="postcode-error">{this.state.postcodeError}</span>
             : searchResult}
         </Grid>

@@ -34,7 +34,9 @@ export function getOrganisationsList(){
   const sendInfo = async (dispatch) => {
     try {
       const res = await axios.get(`${api}/service/all`)
-      return dispatch(setOrganisationsList(res.data))
+      // Decode data 
+      const data = window.atob(JSON.parse(res.data))
+      return dispatch(setOrganisationsList(JSON.parse(data)))
     } catch (error) {
       return helpers.errorParser(error)
     }

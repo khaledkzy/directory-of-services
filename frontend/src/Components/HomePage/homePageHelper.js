@@ -4,17 +4,22 @@ import helpers from '../../helpers';
 // and return that organisation if at least one input field pass the test
 
 function findOrganisationByCheckingField(orgs, userQuery) {
-  const arr = []
+  const arr            = [];
+  const excludedFields = ["lat", "telephone", "long", "website"];
   orgs.filter(org => (
     Object.keys(org)
     .map(key => (
       userQuery.map(item => {
-        if (typeof org[key] === 'string' && org[key].toLowerCase().includes(item.toLowerCase())) arr.push(org);
-        return arr
+        const isKeyValueNumber = typeof (org[key]) !== 'number';
+        const isQueryHasMatch  = isKeyValueNumber ? org[key].toLowerCase().includes(item.toLowerCase()): null;
+        if (isQueryHasMatch && !excludedFields.includes(key)) {
+          arr.push(org);
+        } 
+        return arr;
       })
     ))
   ))
-  return [...new Set(arr)]
+  return [...new Set(arr)];
 }
 
 const filterData = (orgs, search, postcodeValue) => {
@@ -30,6 +35,29 @@ const filterData = (orgs, search, postcodeValue) => {
   return [];
 }
 
+// This function return organisation that match the borough or the area enter by the user 
+function findOrganisationByLocation(orgs, userQuery) {
+  const location = userQuery.trim().split(' ');
+  const arr      = [];
+  orgs.filter(org => (
+    Object.keys(org)
+    .map(key => (
+      location.map(item => {
+        const isKeyValueNumber = typeof (org[key]) !== 'number';
+        const isQueryHasMatch  = isKeyValueNumber ? org[key].toLowerCase().includes(item.toLowerCase()): null;
+        if (isQueryHasMatch && 
+          (key === 'borough' || key === 'area') &&
+          org[key].toLowerCase().includes(item.toLowerCase())) {
+          arr.push(org);
+        } 
+        return arr;
+      })
+    ))
+  ))
+  return [...new Set(arr)];
+}
+
 export default {
-  filterData
+  filterData,
+  findOrganisationByLocation
 }
