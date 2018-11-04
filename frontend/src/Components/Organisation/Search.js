@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import Button from "material-ui/Button";
 import PropTypes from "prop-types";
 import Grid from "material-ui/Grid";
@@ -12,6 +13,7 @@ import "react-select/dist/react-select.css";
 import helpers from "../../helpers";
 import searchStyle from "./searchStyle";
 import "./search.css";
+import { getOrganisationsList } from '../../actions/getApiData';
 
 const organisations = [
   { postCode: "SE8 4PA" },
@@ -59,12 +61,25 @@ const days = [
 
 class Search extends React.Component {
   state = {
-    suggestions: []
+    suggestions: [],
+    organisations: []
   };
+  componentWillReceiveProps(newProps) {
+    (() => {
+      const org = []
+      newProps.organisations.map(organisation => org.push({postCode: organisation.postcode}))
+      const filterOrg = org.filter((element, index, self) =>
+      index === self.findIndex((current) => (
+        current.postCode === element.postCode
+        ))
+        )
+        this.setState({organisations: filterOrg})
+      })()
+  }
 
   handleSuggestionsFetchRequested = ({ value }) => {
     this.setState({
-      suggestions: helpers.getSuggestions(value, organisations)
+      suggestions: helpers.getSuggestions(value, this.state.organisations)
     });
   };
 
@@ -100,7 +115,8 @@ class Search extends React.Component {
                 placeholder: "Enter postcode or borough...",
                 name: "postCode",
                 value: this.props.searchInput,
-                onChange: this.props.handlePostCodeChange
+                onChange: this.props.handlePostCodeChange,
+                onKeyUp: this.props.handleKeyUp
               }}
             />
             <button
@@ -163,4 +179,9 @@ Search.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(searchStyle.styles)(Search);
+function mapStateToProps(state) {
+  return {
+    organisations: state.filteredBranchsByCategory.branchs
+  }
+}
+export default connect(mapStateToProps , { getOrganisationsList })(withStyles(searchStyle.styles)(Search));

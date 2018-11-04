@@ -76,10 +76,16 @@ class Organisations extends Component {
       });
     }
   };
+  handleKeyUp = (e) => {
+    this.handlePostSearch(e)
+ }
 
   handlePostCodeChange = (event, { newValue }) => {
+    this.handlePostSearch(event, newValue)
+    this.clearPostcodeField()
     this.setState(
       {
+        organisations: this.props.organisation,
         searchInput: newValue,
         isPostcode: true
       },
@@ -87,7 +93,8 @@ class Organisations extends Component {
     );
   };
 
-  handlePostSearch = async () => {
+  handlePostSearch = async (event) => {
+    event.preventDefault();
     const { searchInput } = this.state;
     const isAlphaNumeric = helpers.isAlphaNumeric(searchInput);
     if (isAlphaNumeric) {
@@ -196,6 +203,7 @@ class Organisations extends Component {
           postcodeError={this.state.postcodeError}
           clearPostcodeField={this.clearPostcodeField}
           isPostcode={this.state.isPostcode}
+          handleKeyUp={this.handleKeyUp}
         />
         <Grid container className="organisation-page" spacing={24} wrap="wrap">
           {orgHelpers
