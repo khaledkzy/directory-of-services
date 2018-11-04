@@ -15,11 +15,7 @@ import searchStyle from "./searchStyle";
 import "./search.css";
 import { getOrganisationsList } from '../../actions/getApiData';
 
-const organisations = [
-  { postCode: "SE8 4PA" },
-  { postCode: "H2 2TH" },
-  { postCode: "H2 3TH" }
-];
+
 const days = [
   {
     id: 1,
