@@ -76,9 +76,7 @@ class Organisations extends Component {
       });
     }
   };
-  handleKeyUp = (e) => {
-    this.handlePostSearch(e)
- }
+
 
   handlePostCodeChange = (event, { newValue }) => {
     this.handlePostSearch(event, newValue)
@@ -203,7 +201,7 @@ class Organisations extends Component {
           postcodeError={this.state.postcodeError}
           clearPostcodeField={this.clearPostcodeField}
           isPostcode={this.state.isPostcode}
-          handleKeyUp={this.handleKeyUp}
+          handleKeyUp={this.handlePostSearch}
         />
         <Grid container className="organisation-page" spacing={24} wrap="wrap">
           {orgHelpers
