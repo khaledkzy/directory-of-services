@@ -13,8 +13,6 @@ describe('Search Component', () => {
     it('Should render without crashing', () => {
         const initialState = {}
         const store = mockStore(initialState)
-      //  const wrapper = shallow(<Search />,  { context: { store }}).length
-
       const wrapper = shallow(
         <Provider store={store}>
           <Search />
