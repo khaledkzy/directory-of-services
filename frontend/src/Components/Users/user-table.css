@@ -80,6 +80,9 @@
   overflow-x: hidden;
 } 
 
+.add-message p#filled-full-width-helper-text{
+  font-size: 17px;
+}
 /*  <=================from the root  */
 
 /* --------------------->Media queries<------------------------------- */

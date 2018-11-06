@@ -5,7 +5,7 @@ import nodemailer from 'nodemailer';
 import mg from 'nodemailer-mailgun-transport';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
-import secret from '../authentication/config'
+import secret from '../authentication/config';
 import '../authentication/passport';
 import {
   getAllUsers,
@@ -19,13 +19,15 @@ import {
   validateResetInfo
 } from '../controllers/users_controller';
 
+import * as config from '../config';
+
 const router = express.Router();
 const auth = {
   auth: {
     api_key: process.env.MAILGUN_API_KEY,
     domain: process.env.MAILGUN_DOMAIN
   }
-}
+};
 const nodemailerMailgun = nodemailer.createTransport(mg(auth));
 
 router.get('/users', async (req, res) => {
@@ -41,11 +43,9 @@ router.get('/users', async (req, res) => {
       rejectedByAdmin: user.rejectedByAdmin,
       email: user.email
     }));
-    res.status(200).json(users)
+    res.status(200).json(users);
   } catch (err) {
-    res
-      .status(502)
-      .json(err)
+    res.status(502).json(err);
   }
 });
 
@@ -54,30 +54,26 @@ router.get('/users/:id', async (req, res) => {
     const response = await getUsersById(req.params.id);
     res.status(200).json(response);
   } catch (err) {
-    res
-      .status(502)
-      .json(err)
+    res.status(502).json(err);
   }
 });
 
 router.delete('/users/:userId', async (req, res) => {
   try {
     const response = await deleteUser(req.params.userId);
-    res.status(200).json({ success: true, message: 'user deleted successfully', response });
+    res
+      .status(200)
+      .json({ success: true, message: 'User deleted successfully', response });
   } catch (err) {
-    res.status(502).json({ success: false, message: 'There is an error occurred', err })
+    res
+      .status(502)
+      .json({ success: false, message: 'There is an error occurred', err });
   }
 });
 
 router.post('/users', async (req, res) => {
-  let {
-    password
-  } = req.body;
-  const {
-    email,
-    orgName,
-    fullname
-  } = req.body;
+  let { password } = req.body;
+  const { email, orgName, fullname } = req.body;
   await bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(password, salt, async (error, hash) => {
       if (error) {
@@ -89,20 +85,14 @@ router.post('/users', async (req, res) => {
         email: email,
         fullname: fullname,
         organisation: orgName
-      }).then(user => res.json(user))
-    })
-  })
+      }).then(user => res.json(user));
+    });
+  });
 });
 
 router.put('/users/:userId', async (req, res) => {
-  let {
-    password
-  } = req.body;
-  const {
-    email,
-    fullname,
-    organisation
-  } = req.body;
+  let { password } = req.body;
+  const { email, fullname, organisation } = req.body;
   await bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(password, salt, async (error, hash) => {
       if (error) {
@@ -114,11 +104,12 @@ router.put('/users/:userId', async (req, res) => {
         email,
         fullname,
         organisation
-      }).then(() => res.json({
-        message: 'user updated successfully'
-      }))
-    })
-  })
+      }).then(() =>
+        res.json({
+          message: 'User updated successfully'
+        }));
+    });
+  });
 });
 
 router.put('/requestEditor', async (req, res) => {
@@ -187,7 +178,7 @@ router.put('/user/role', async (req, res) => {
       fullname,
       organisation,
       id
-    } = req.body
+    } = req.body;
     await updateUser(id, {
       role,
       fullname,
@@ -197,33 +188,46 @@ router.put('/user/role', async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'User updated successfully'
-    })
+    });
   } catch (err) {
     res.status(502).json({
       success: false,
       message: 'User has not been updated',
       err
-    })
+    });
   }
-})
+});
+
+// Send email
+async function sendEmail({
+  from,
+  to,
+  subject,
+  text
+}) {
+  try {
+    await nodemailerMailgun.sendMail({
+      from: `${from}`,
+      to: `${to}`,
+      subject: `${subject}`,
+      text: `${text}`
+    });
+  } catch (err) {
+    throw new Error(JSON.parse(err.message));
+  }
+}
 
 router.post('/signup', async (req, res) => {
   try {
-    let {
-      password
-    } = req.body;
-    const {
-      fullname,
-      email,
-      organisation
-    } = req.body;
+    let { password } = req.body;
+    const { fullname, email, organisation } = req.body;
     if (email.length > 0 && password.length > 0) {
-      const user = await getUserByEmail(email)
+      const user = await getUserByEmail(email);
       if (user.length > 0) {
         res.json({
           success: false,
-          message: 'User is already found'
-        })
+          message: 'User already exist'
+        });
       } else {
         bcrypt.genSalt(10, (err, salt) => {
           bcrypt.hash(password, salt, (error, hash) => {
@@ -240,19 +244,43 @@ router.post('/signup', async (req, res) => {
               rejectedByAdmin: false
             }).then(userData => {
               if (userData) {
+                sendEmail(
+                  {
+                    from: config.SITE_EMAIL,
+                    to: `${email}`,
+                    subject: 'Welcome to DOS',
+                    text: `
+                    Hello,
+                    Welcome to the Welcome Guide, and thanks for signing up. 
+                    The Welcome Guide is a directory of service for case workers who work with asylum seekers, refugeees and other 
+                    people in need.
+                    This beta service was developed by developers from CodeYourFuture with the 
+                    support of Help Refugees. We appreciate your feedback to improve this
+                    service.
+                      
+                    Thanks, 
+                    CYF / HR`
+                  },
+                  (errors, info) => {
+                    if (errors) {
+                      res.status(500).json({ success: false, errors: errors });
+                    }
+                    res.json(`Response: ${info}`);
+                  }
+                );
                 res.json({
                   success: true,
                   message: 'User is registered'
-                })
+                });
               } else {
                 res.json({
                   success: false,
                   message: 'User is not registered'
-                })
+                });
               }
             });
-          })
-        })
+          });
+        });
       }
     }
   } catch (err) {
@@ -260,24 +288,19 @@ router.post('/signup', async (req, res) => {
       success: false,
       message: 'You have to add email and password!',
       err
-    })
+    });
   }
-})
+});
 
 router.post('/login', async (req, res) => {
   try {
-    const {
-      password,
-      email
-    } = req.body;
+    const { password, email } = req.body;
     await getUserByEmail(email).then(userInfo => {
       if (userInfo.length <= 0) {
-        res
-          .status(403)
-          .json({
-            success: false,
-            message: 'User is not registered'
-          })
+        res.status(403).json({
+          success: false,
+          message: 'User is not registered'
+        });
       } else {
         comparePassword(password, userInfo[0].salt_password, (err, isMatch) => {
           if (err) {
@@ -301,98 +324,102 @@ router.post('/login', async (req, res) => {
                 user: userInfo
               });
           } else {
-            res
-              .status(403)
-              .json({
-                success: false,
-                message: 'Password is not match'
-              })
+            res.status(403).json({
+              success: false,
+              message: 'Password is not match'
+            });
           }
-        })
+        });
       }
-    })
+    });
   } catch (err) {
     res.status(502).json({
       success: false,
       message: 'Your Password or email doesn\'t match!',
       err
-    })
+    });
   }
-})
+});
 
-router.get('/users/profile', passport.authenticate('jwt', {
-  session: false
-}), (req, res) => {
-  res.json({
-    success: true
-  })
-})
+router.get(
+  '/users/profile',
+  passport.authenticate('jwt', {
+    session: false
+  }),
+  (req, res) => {
+    res.json({
+      success: true
+    });
+  }
+);
 
-router.post('/forgot', (req, res) => {
-  crypto.randomBytes(20, async (err, buf) => {
-    if (err) {
-      res.status(502).json({
-        success: false,
-        message: 'an error occurred!',
-        err
-      })
-    }
-    try {
-      const token = buf.toString('hex');
-      const user = await getUserByEmail(req.body.email);
-      let {
-        resetPasswordExpires,
-        resetPasswordToken
-      } = user[0];
-      resetPasswordToken = token;
-      resetPasswordExpires = (Date.now() + 3600000).toString(); // 1 hour
+// Generate token
+async function generateToken() {
+  return new Promise((resolve, reject) => {
+    crypto.randomBytes(20, async (err, buf) => {
+      if (err) {
+        reject(err);
+      }
+      if (buf) {
+        resolve(buf.toString('hex'));
+      }
+    });
+  });
+}
 
-      await updateUser(user[0].id, {
-        resetPasswordExpires,
-        resetPasswordToken
-      })
-      await nodemailerMailgun.sendMail({
-        from: `${req.body.siteEmail}`,
-        to: `${req.body.email}`,
-        subject: 'Reset User Password',
-        text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
-          Please click on the following link, or paste this into your browser to complete the process:\n\n
-          http://${req.body.siteHost}/reset/${token}\n\n
-          If you did not request this, please ignore this email and your password will remain unchanged.\n`
-      })
+router.post('/forgot', async (req, res) => {
+  try {
+    const { email } = req.body;
+    const token = await generateToken();
+    const user = await getUserByEmail(email);
+    let { resetPasswordExpires, resetPasswordToken } = user[0];
+    resetPasswordToken = token;
+    resetPasswordExpires = (Date.now() + 3600000).toString(); // 1 hour
 
-      res.status(200).json({
-        success: true,
-        message: 'Your request has made successfully!'
-      })
-    } catch (error) {
-      res.status(502).json({
-        success: false,
-        message: 'User dose not exist!',
-        error
-      })
-    }
-  })
+    await updateUser(user[0].id, {
+      resetPasswordExpires,
+      resetPasswordToken
+    });
+    await sendEmail({
+      from: config.SITE_EMAIL,
+      to: `${email}`,
+      subject: 'Reset User Password',
+      text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+        Please click on the following link, or paste this into your browser to complete the process:\n\n
+        https://${config.SITE_HOST}/reset/${token}\n\n
+        If you did not request this, please ignore this email and your password will remain unchanged.\n`
+    });
+    res.status(200).json({
+      success: true,
+      message: 'An email has been sent to you with password reset instructions!'
+    });
+  } catch (error) {
+    res.status(502).json({
+      success: false,
+      message: 'We could not reset your password, please try again!'
+    });
+  }
 });
 
 router.get('/reset/:token', async (req, res) => {
   try {
-    const user = await validateResetInfo(req.params.token, Date.now().toString());
+    const user = await validateResetInfo(
+      req.params.token,
+      Date.now().toString()
+    );
     const userId = user[0].id;
-    const {
-      email
-    } = user[0];
+    const { email } = user[0];
     res.status(200).json({
       success: true,
       userId,
       email
-    })
+    });
   } catch (err) {
     res.status(502).json({
       success: false,
       message: 'Password reset token is invalid or has expired.',
       err
-    })
+    });
   }
 });
 
@@ -400,9 +427,7 @@ router.post('/reset/:token', async (req, res) => {
   try {
     const user = await validateResetInfo(req.body.token, Date.now().toString());
     if (req.body.password === req.body.confirm) {
-      let {
-        password
-      } = req.body;
+      let { password } = req.body;
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(password, salt, async (error, hash) => {
           if (error) {
@@ -413,23 +438,58 @@ router.post('/reset/:token', async (req, res) => {
             salt_password: password,
             resetPasswordToken: '',
             resetPasswordExpires: ''
-          })
-        })
-      })
-      await nodemailerMailgun.sendMail({
+          });
+        });
+      });
+      await sendEmail({
         from: `${req.body.siteEmail}`,
         to: `${user[0].email}`,
         subject: 'Your password has been changed',
-        text: `Hello,\n\n This is a confirmation that the password for your account ${user[0].email} has just been changed.\n`
-      })
+        text: `Hello,\n\n This is a confirmation that the password for your account ${
+          user[0].email
+        } has just been changed.\n`
+      });
     }
     res.status(200).json({
       success: true,
       message: 'Your password has been changed successfully!'
-    })
+    });
   } catch (error) {
     res.status(502).json({
       message: 'Password reset token is invalid or has expired.',
+      error
+    });
+  }
+});
+
+// Invite user to use the service
+router.post('/invite', async (req, res) => {
+  const { email, message } = req.body;
+  const arrEmail = email.split(',');
+  try {
+    await arrEmail.map(emai =>
+      sendEmail({
+        from: config.SITE_EMAIL,
+        to: emai,
+        subject: 'invite',
+        text: `${message} 
+  
+      Join by using this link https://dos.codeyourfuture.io.
+  
+      This beta service was developed by developers from CodeYourFuture with the 
+      support of Help Refugees. We appreciate your feedback to improve this
+      service.
+        
+      Thanks, 
+      CYF / HR`
+      }))
+    res.status(200).json({
+      success: true,
+      message: 'Your invitation has been sent!'
+    });
+  } catch (error) {
+    res.status(502).json({
+      message: 'We could not sent your invitation please try again.',
       error
     });
   }

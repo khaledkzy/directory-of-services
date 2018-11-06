@@ -16,7 +16,6 @@
 }
 
 .categories a:hover {
-  /* padding: 0.4rem 0.2rem 0.4rem 2rem; */
   color: #fff;
 }
 
@@ -24,4 +23,13 @@
   background: #1abcd4;
   padding: 0.4em 0.2em 0.4em 2em;
   color: #fff;
+}
+
+.categories a[target='blank'] {
+  margin: 0px .2rem 10px;
+  background: #1abcd4;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: #fff;
+  padding: 7px;
 }

@@ -23,6 +23,7 @@ export default function Categories(){
           )
         )}
       </ul>
+      <a href="https://goo.gl/Jhy5Us" role="button" target="blank">Please Give Feedback</a>
     </div>
   );
 }
