@@ -77,7 +77,6 @@ class Organisations extends Component {
     }
   };
 
-
   handlePostCodeChange = (event, { newValue }) => {
     this.handlePostSearch(event, newValue)
     this.clearPostcodeField()
