@@ -103,3 +103,16 @@ export function deleteUser(userId) {
   }
   return sendInfo
 }
+
+
+export function verified(email, verify) {
+  const requestFun = async () => {
+    try {
+      const res = await axios.post(`${api}/verified`, {email, verify});
+      return res.data;
+    } catch (error) {
+      return helpers.errorParser(error)
+    }
+  }
+  return requestFun
+}

@@ -25,15 +25,16 @@ class Request extends Component{
             requested: true
           })
         this.state.notificationSystem.addNotification({
-            message: 'You have successfully reuested to become an editor',
-            level: 'info',
+            message: 'Please Check your email',
+            level: 'success',
             position: 'tr',
             autoDismiss: 2,
           });
     }
-    handleReject = (data, event) => {
+    handleReject = (email, event) => {
       event.preventDefault();
-      this.props.rejectAccessByEmail(data);
+      console.log(email)
+      this.props.rejectAccessByEmail(email);
       this.setState({
         canceled: true
       })
@@ -52,6 +53,11 @@ class Request extends Component{
             <Fragment>
               <h2 className="request" >If you want to become an editor please click <button className="button" onClick={this.handleSubmit} > here</button> </h2>
             </Fragment>
+           }
+            {this.state.requested === true &&
+            <div>
+              <h2 className="request">Please Check your email</h2>
+            </div>
            }
             {this.state.canceled === false && this.props.hasRequestedEditor  && this.props.rejected === false &&
             <div>

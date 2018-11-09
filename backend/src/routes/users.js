@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import passport from 'passport';
 import express from 'express';
+import randomstring from 'randomstring';
 import nodemailer from 'nodemailer';
 import mg from 'nodemailer-mailgun-transport';
 import crypto from 'crypto';
@@ -16,10 +17,14 @@ import {
   deleteUser,
   getUserByEmail,
   comparePassword,
-  validateResetInfo
+  validateResetInfo,
+  getUsersByEmail
 } from '../controllers/users_controller';
 
 import * as config from '../config';
+
+
+
 
 const router = express.Router();
 const auth = {
@@ -29,6 +34,24 @@ const auth = {
   }
 };
 const nodemailerMailgun = nodemailer.createTransport(mg(auth));
+// Send email
+async function sendEmail({
+  from,
+  to,
+  subject,
+  text
+}) {
+  try {
+    await nodemailerMailgun.sendMail({
+      from: `${from}`,
+      to: `${to}`,
+      subject: `${subject}`,
+      text: `${text}`
+    });
+  } catch (err) {
+    throw new Error(JSON.parse(err.message));
+  }
+}
 
 router.get('/users', async (req, res) => {
   try {
@@ -41,13 +64,16 @@ router.get('/users', async (req, res) => {
       last_updated: user.last_updated,
       hasRequestedEditor: user.hasRequestedEditor,
       rejectedByAdmin: user.rejectedByAdmin,
-      email: user.email
+      email: user.email,
+      verified: user.verified
     }));
     res.status(200).json(users);
   } catch (err) {
     res.status(502).json(err);
   }
 });
+
+
 
 router.get('/users/:id', async (req, res) => {
   try {
@@ -73,7 +99,9 @@ router.delete('/users/:userId', async (req, res) => {
 
 router.post('/users', async (req, res) => {
   let { password } = req.body;
-  const { email, orgName, fullname } = req.body;
+  const {
+    email, orgName, fullname
+  } = req.body;
   await bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(password, salt, async (error, hash) => {
       if (error) {
@@ -92,7 +120,9 @@ router.post('/users', async (req, res) => {
 
 router.put('/users/:userId', async (req, res) => {
   let { password } = req.body;
-  const { email, fullname, organisation } = req.body;
+  const {
+    email, fullname, organisation
+  } = req.body;
   await bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(password, salt, async (error, hash) => {
       if (error) {
@@ -112,21 +142,67 @@ router.put('/users/:userId', async (req, res) => {
   });
 });
 
-router.put('/requestEditor', async (req, res) => {
+router.post('/verified', async (req, res) => {
   const {
-    hasRequestedEditor,
+    email,
+    verify
+  } = req.body;
+
+  try {
+    const response = await getUsersByEmail(email);
+    const verifiedDB = await response[0].verified
+    const requested = await response[0].hasRequestedEditor
+    if (verifiedDB === verify && requested === false) {
+      await updateUserbyEmail(email, {
+        hasRequestedEditor: true
+      })
+      res.status(200).json({
+        request: false, // this is to make sure the user has already requested
+        success: true,
+        message: 'Your email has been verified'
+      });
+    } else if (verifiedDB === verify && requested === true) {
+      res.status(200).json({
+        request: true,
+        success: true,
+        message: 'Your request has been already send to the admin'
+      });
+    }
+  } catch (err) {
+    res.status(502).json({
+      success: false,
+      message: 'Please check your email.',
+      err
+    });
+  }
+});
+
+router.post('/requestEditor', async (req, res) => {
+  const verified = randomstring.generate(12);
+  const {
     email
   } = req.body;
-  await updateUserbyEmail(email, {
-    hasRequestedEditor
-  }).then(() => {
-    res.json({
-      message: 'Requested To Become An Editor'
+  try {
+    await
+    sendEmail({
+      from: config.SITE_EMAIL,
+      to: email,
+      subject: 'invite',
+      text: `Please Click on the link and type your email https://${config.SITE_HOST}/verified/${verified}`
     })
-  })
-    .catch(err => {
-      console.log('err happened', err)
+    await updateUserbyEmail(email, {
+      verified
     })
+    res.status(200).json({
+      success: true,
+      message: 'Your invitation has been sent!'
+    });
+  } catch (error) {
+    res.status(502).json({
+      message: 'We could not sent your invitation please try again.',
+      error
+    });
+  }
 });
 
 router.put('/acceptEditor', async (req, res) => {
@@ -170,6 +246,25 @@ router.put('/rejectEditor', async (req, res) => {
     })
 });
 
+router.put('/cancelEditorRequest', async (req, res) => {
+  const {
+    hasRequestedEditor,
+    email
+  } = req.body;
+  console.log(req.body)
+  await updateUserbyEmail(email, {
+    hasRequestedEditor
+  }).then(() => {
+    console.log('success on call')
+    res.json({
+      message: 'Rejecged To Become An Editor'
+    })
+  })
+    .catch(err => {
+      console.log('err happened', err)
+    })
+});
+
 // Use this route to modify user role, org name, fullname
 router.put('/user/role', async (req, res) => {
   try {
@@ -198,24 +293,7 @@ router.put('/user/role', async (req, res) => {
   }
 });
 
-// Send email
-async function sendEmail({
-  from,
-  to,
-  subject,
-  text
-}) {
-  try {
-    await nodemailerMailgun.sendMail({
-      from: `${from}`,
-      to: `${to}`,
-      subject: `${subject}`,
-      text: `${text}`
-    });
-  } catch (err) {
-    throw new Error(JSON.parse(err.message));
-  }
-}
+
 
 router.post('/signup', async (req, res) => {
   try {
@@ -251,14 +329,14 @@ router.post('/signup', async (req, res) => {
                     subject: 'Welcome to DOS',
                     text: `
                     Hello,
-                    Welcome to the Welcome Guide, and thanks for signing up. 
-                    The Welcome Guide is a directory of service for case workers who work with asylum seekers, refugeees and other 
+                    Welcome to the Welcome Guide, and thanks for signing up.
+                    The Welcome Guide is a directory of service for case workers who work with asylum seekers, refugeees and other
                     people in need.
-                    This beta service was developed by developers from CodeYourFuture with the 
+                    This beta service was developed by developers from CodeYourFuture with the
                     support of Help Refugees. We appreciate your feedback to improve this
                     service.
-                      
-                    Thanks, 
+
+                    Thanks,
                     CYF / HR`
                   },
                   (errors, info) => {
@@ -315,7 +393,8 @@ router.post('/login', async (req, res) => {
               email: userInfo[0].email,
               success: 'true',
               hasRequestedEditor: userInfo[0].hasRequestedEditor,
-              rejectedByAdmin: userInfo[0].rejectedByAdmin
+              rejectedByAdmin: userInfo[0].rejectedByAdmin,
+              verified: userInfo[0].verified
             }, secret);
             res
               .status(200)
@@ -366,6 +445,7 @@ async function generateToken() {
     });
   });
 }
+
 
 router.post('/forgot', async (req, res) => {
   try {
@@ -472,15 +552,15 @@ router.post('/invite', async (req, res) => {
         from: config.SITE_EMAIL,
         to: emai,
         subject: 'invite',
-        text: `${message} 
-  
+        text: `${message}
+
       Join by using this link https://dos.codeyourfuture.io.
-  
-      This beta service was developed by developers from CodeYourFuture with the 
+
+      This beta service was developed by developers from CodeYourFuture with the
       support of Help Refugees. We appreciate your feedback to improve this
       service.
-        
-      Thanks, 
+
+      Thanks,
       CYF / HR`
       }))
     res.status(200).json({

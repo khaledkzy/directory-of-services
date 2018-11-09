@@ -9,6 +9,9 @@ module.exports = {
   getUsersById: userId =>
     Users.query().findById(userId),
 
+  getUsersByEmail: (userEmail) =>
+    Users.query().skipUndefined().where('email', userEmail),
+
   updateUser: (userId, userData) =>
     Users.query().skipUndefined().where('id', userId).patch(userData),
 

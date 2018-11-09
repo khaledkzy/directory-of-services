@@ -79,7 +79,7 @@ export function requestAccess(email) {
   const sendInfo = async () => {
     try {
       const editUser = await axios
-        .put(`${api}/requestEditor`, { email, hasRequestedEditor: true });
+        .post(`${api}/requestEditor`, { email});
       return editUser.data
     } catch (error) {
       return helpers.errorParser(error)
