@@ -33,7 +33,6 @@ class Request extends Component{
     }
     handleReject = (email, event) => {
       event.preventDefault();
-      console.log(email)
       this.props.rejectAccessByEmail(email);
       this.setState({
         canceled: true

@@ -41,7 +41,6 @@ const styles = theme => ({
 const Routes = props => {
   const { classes } = props;
   const showSideBar = props.location.pathname !== '/' && props.location.pathname.substring(0,9) !== '/verified' ;
-  console.log(props.location.pathname.substring(0,9))
   return (
     <div>
       <Route exact path="/verified/:verified" component={Verify} />

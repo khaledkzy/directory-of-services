@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import {  getListOfUsers } from '../../actions/getApiData';
 import { verified } from '../../actions/postData';
-import { Link } from 'react-router-dom';
 import './verify.css'
 
 
@@ -14,15 +14,6 @@ class Verify extends Component{
       success: false,
       requested: false
     };
-  }
-
-  componentWillReceiveProps(newProps) {
-    const users = newProps.usersList;
-    if (users) {
-      this.setState({
-        data: users,
-      })
-    }
   }
 
   submitData = (e) => {
@@ -57,11 +48,11 @@ class Verify extends Component{
           {
             ( this.state.requested  &&  this.state.success ) &&
             <form onSubmit={((e) => this.submitData(e))} className="form-signin" action="" method="post" name="form">
-            <p className="form-signin-red" htmlFor="EMAIL">You have already sent a request.
-            </p>
-            <p className="form-signin-label"> If you want to login please click on the button. </p>
-            <Link to="/" className="btn-login">Login</Link>
-          </form>
+              <p className="form-signin-red" htmlFor="EMAIL">You have already sent a request.
+              </p>
+              <p className="form-signin-label"> If you want to login please click on the button. </p>
+              <Link to="/" className="btn-login">Login</Link>
+            </form>
 
           }
         </div>
