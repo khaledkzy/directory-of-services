@@ -147,13 +147,14 @@ router.post('/verified', async (req, res) => {
     email,
     verify
   } = req.body;
+  const trimedEmail = email.trim()
 
   try {
-    const response = await getUsersByEmail(email);
+    const response = await getUsersByEmail(trimedEmail);
     const verifiedDB = await response[0].verified
     const requested = await response[0].hasRequestedEditor
     if (verifiedDB === verify && requested === false) {
-      await updateUserbyEmail(email, {
+      await updateUserbyEmail(trimedEmail, {
         hasRequestedEditor: true
       })
       res.status(200).json({
@@ -251,11 +252,9 @@ router.put('/cancelEditorRequest', async (req, res) => {
     hasRequestedEditor,
     email
   } = req.body;
-  console.log(req.body)
   await updateUserbyEmail(email, {
     hasRequestedEditor
   }).then(() => {
-    console.log('success on call')
     res.json({
       message: 'Rejecged To Become An Editor'
     })
