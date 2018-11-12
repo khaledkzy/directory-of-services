@@ -185,7 +185,7 @@ router.post('/requestEditor', async (req, res) => {
       from: config.SITE_EMAIL,
       to: email,
       subject: 'invite',
-      text: `Please Click on the link and type your email https://${config.SITE_HOST}/verified/${verified}`
+      text: `Please Click on the link to verify your email https://${config.SITE_HOST}/verified/${verified}`
     })
     await updateUserbyEmail(email, {
       verified
