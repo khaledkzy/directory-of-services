@@ -105,10 +105,10 @@ export function deleteUser(userId) {
 }
 
 
-export function verified(email, verify) {
+export function verified(verify) {
   const requestFun = async () => {
     try {
-      const res = await axios.post(`${api}/verified`, {email, verify});
+      const res = await axios.post(`${api}/verified/${verify}`);
       return res.data;
     } catch (error) {
       return helpers.errorParser(error)

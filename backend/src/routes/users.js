@@ -18,7 +18,8 @@ import {
   getUserByEmail,
   comparePassword,
   validateResetInfo,
-  getUsersByEmail
+  updateUserbyVerified,
+  getUsersByVerified
 } from '../controllers/users_controller';
 
 import * as config from '../config';
@@ -142,19 +143,14 @@ router.put('/users/:userId', async (req, res) => {
   });
 });
 
-router.post('/verified', async (req, res) => {
-  const {
-    email,
-    verify
-  } = req.body;
-  const trimedEmail = email.trim()
-
+router.post('/verified/:verify', async (req, res) => {
+  const { verify } = req.params;
   try {
-    const response = await getUsersByEmail(trimedEmail);
+    const response = await getUsersByVerified(verify);
     const verifiedDB = await response[0].verified
     const requested = await response[0].hasRequestedEditor
-    if (verifiedDB === verify && requested === false) {
-      await updateUserbyEmail(trimedEmail, {
+    if (verify && requested === false) {
+      await updateUserbyVerified(verify, {
         hasRequestedEditor: true
       })
       res.status(200).json({

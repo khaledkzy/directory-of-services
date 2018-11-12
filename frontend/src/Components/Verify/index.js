@@ -16,43 +16,28 @@ class Verify extends Component{
     };
   }
 
-  submitData = (e) => {
-    e.preventDefault()
-    this.props.verified(this.refs.googleInput.value, this.props.match.params.verified).then(data => this.setState({success: data.success , requested: data.request}))
-
+ componentDidMount() {
+  this.props.verified(this.props.match.params.verified)
+  .then(data => this.setState({success: data.success , requested: data.request}))
   }
+
   render() {
     return(
       <div className='emailContainer'>
         <div className="frame">
           {this.state.success=== false &&
           <form onSubmit={((e) => this.submitData(e))} className="form-signin" action="" method="post" name="form">
-            <p className="form-signin-label" >Please Enter Your Email to verify it.</p>
-            <input ref="googleInput" className="form-styling" type="text" name="EMAIL" placeholder="" />
-            <div>
-              <button  className="btn-signin">Verify</button>
-            </div>
+            <p className="form-signin-red">Something went wrong ! Please check the link. </p>
           </form>
         }
           {
           (this.state.success && this.state.requested === false) &&
-
           <form onSubmit={((e) => this.submitData(e))} className="form-signin" action="" method="post" name="form">
             <p className="form-signin-label" htmlFor="EMAIL">Your request to become an editor has been sent to the admin.
             </p>
             <p className="form-signin-label"> If you want to login please click on the button. </p>
             <Link to="/" className="btn-login">Login</Link>
           </form>
-
-          }
-          {
-            ( this.state.requested  &&  this.state.success ) &&
-            <form onSubmit={((e) => this.submitData(e))} className="form-signin" action="" method="post" name="form">
-              <p className="form-signin-red" htmlFor="EMAIL">You have already sent a request.
-              </p>
-              <p className="form-signin-label"> If you want to login please click on the button. </p>
-              <Link to="/" className="btn-login">Login</Link>
-            </form>
 
           }
         </div>
