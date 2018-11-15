@@ -94,7 +94,7 @@ class Organisations extends Component {
     event.preventDefault();
     const { searchInput } = this.state;
     const isAlphaNumeric = helpers.isAlphaNumeric(searchInput);
-    if (isAlphaNumeric) {
+    if (isAlphaNumeric && searchInput.length >= 5) {
       if (searchInput.length === 0) {
         this.setState({ postcodeError: "Postcode is required *" });
       } else if (searchInput.length < 5) {
