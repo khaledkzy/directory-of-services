@@ -5,8 +5,6 @@ import {  getListOfUsers } from '../../actions/getApiData';
 import { verified } from '../../actions/postData';
 import './verify.css'
 
-
-
 class Verify extends Component{
   constructor(props, context) {
     super(props, context);
