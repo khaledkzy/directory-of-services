@@ -148,6 +148,17 @@ class Organisations extends Component {
     }
   };
 
+  handleBorough = () => {
+    const search = this.state.searchInput;
+      this.setState({
+        organisations: homeSearchHelpers.findOrganisationByLocation(
+          this.state.organisations,
+          search
+        ),
+        isPostcode: false
+      });
+  }
+
   dataOrder = () => {
     if (!this.state.sort) {
       return helpers.sortArrObj;
@@ -200,7 +211,7 @@ class Organisations extends Component {
           postcodeError={this.state.postcodeError}
           clearPostcodeField={this.clearPostcodeField}
           isPostcode={this.state.isPostcode}
-          handleKeyUp={this.handlePostSearch}
+          handleKeyUp={this.handleBorough}
         />
         <Grid container className="organisation-page" spacing={24} wrap="wrap">
           {orgHelpers
