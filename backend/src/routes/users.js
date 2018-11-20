@@ -188,7 +188,7 @@ router.post('/requestEditor', async (req, res) => {
       text: `Please Click on the link to verify your email https://${config.SITE_HOST}/verified/${verified}`
     })
     await updateUserbyEmail(email, {
-      verified
+      verification_code: verified
     })
     res.status(200).json({
       success: true,

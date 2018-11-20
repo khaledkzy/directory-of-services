@@ -13,7 +13,7 @@ module.exports = {
     Users.query().skipUndefined().where('email', userEmail),
 
   getUsersByVerified: (userVerified) =>
-    Users.query().skipUndefined().where('verified', userVerified),
+    Users.query().skipUndefined().where('verification_code', userVerified),
 
   updateUser: (userId, userData) =>
     Users.query().skipUndefined().where('id', userId).patch(userData),
@@ -22,7 +22,7 @@ module.exports = {
     Users.query().skipUndefined().where('email', userEmail).patch(userData),
 
   updateUserbyVerified: (verified, userData) =>
-    Users.query().skipUndefined().where('verified', verified).patch(userData),
+    Users.query().skipUndefined().where('verification_code', verified).patch(userData),
 
   deleteUser: userId =>
     Users.query().deleteById(userId),
